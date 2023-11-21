@@ -1,23 +1,25 @@
-import 'package:app/screens/restaurants_screen.dart';
-import 'package:app/services/restaurant_service.dart';
+import 'package:app/services/system_service.dart';
+import 'package:datetime_picker_formfield_new/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
-class RestaurantDetailScreen extends StatefulWidget {
-  const RestaurantDetailScreen({
+class SystemDetailScreen extends StatefulWidget {
+  const SystemDetailScreen({
     super.key,
   });
 
   @override
-  State<RestaurantDetailScreen> createState() => _RestaurantDetailScreenState();
+  State<SystemDetailScreen> createState() => _SystemDetailScreenState();
 }
 
-class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
+class _SystemDetailScreenState extends State<SystemDetailScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _typeController = TextEditingController();
-  final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _onwerController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _versionController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  double stars = 0;
+  final TextEditingController _releaseController = TextEditingController();
   late Map args = {};
 
   @override
@@ -27,11 +29,11 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
       args['isEditing'] = args['isEditing'] ?? false;
       if (args['isEditing'] ?? false) {
         _nameController.text = args['name'] ?? '';
-        _phoneController.text = args['phone'] ?? '';
-        _addressController.text = args['address'] ?? '';
-        _typeController.text = args['type'] ?? '';
+        _priceController.text = args['price'].toString() ?? '';
+        _versionController.text = args['latest_version'] ?? '';
+        _onwerController.text = args['owner'] ?? '';
         _descriptionController.text = args['description'] ?? '';
-        stars = args['stars'].toDouble() ?? 0;
+        _releaseController.text = args['release_date'] ?? '';
       }
     });
     super.didChangeDependencies();
@@ -53,7 +55,7 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: Text(
-          "${args['isEditing'] ? 'Editar' : 'Nuevo'} Restaurante",
+          "${args['isEditing'] ? 'Editar' : 'Nuevo'} Sistema",
           style: const TextStyle(
             fontWeight: FontWeight.w600,
             color: Colors.white,
@@ -72,48 +74,51 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _addressController,
+              controller: _versionController,
               decoration: const InputDecoration(
-                labelText: 'Dirección',
+                labelText: 'Última Versión',
               ),
             ),
             const SizedBox(height: 16.0),
             TextField(
-              controller: _phoneController,
-              decoration: const InputDecoration(
-                labelText: 'Teléfono',
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            TextField(
-              controller: _typeController,
-              decoration: const InputDecoration(
-                labelText: 'Tipo',
-              ),
-            ),
-            const SizedBox(height: 16.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ...List.generate(
-                    stars.toInt(), (index) => const Icon(Icons.star))
+              controller: _priceController,
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(RegExp(r'^(\d+)?\.?\d{0,2}'))
               ],
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'Precio',
+              ),
             ),
-            Slider(
-              value: stars,
-              max: 5,
-              divisions: 5,
-              label: stars.toString(),
-              onChanged: (double value) {
-                setState(() {
-                  stars = value;
-                });
+            const SizedBox(height: 16.0),
+            TextField(
+              controller: _onwerController,
+              decoration: const InputDecoration(
+                labelText: 'Creador',
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            DateTimeField(
+              format: DateFormat("yyyy-MM-dd"),
+              controller: _releaseController,
+              decoration: const InputDecoration(
+                labelText: 'Fecha de Lanzamiento',
+              ),
+              onShowPicker: (context, currentValue) {
+                return showDatePicker(
+                  context: context,
+                  firstDate: DateTime(1900),
+                  initialDate: currentValue ?? DateTime.now(),
+                  lastDate: DateTime(2100),
+                  fieldLabelText: "Fecha de Lanzamiento",
+                );
               },
             ),
+            const SizedBox(height: 16.0),
             TextField(
               controller: _descriptionController,
               //obscureText: true,
-              maxLines: 5,
+              maxLines: 3,
               //or null
               decoration: const InputDecoration(
                 labelText: 'Descripción',
@@ -126,34 +131,35 @@ class _RestaurantDetailScreenState extends State<RestaurantDetailScreen> {
                 try {
                   String name = _nameController.text;
                   String description = _descriptionController.text;
-                  String address = _addressController.text;
-                  String phone = _phoneController.text;
-                  String type = _typeController.text;
+                  String version = _versionController.text;
+                  double price = double.parse(_priceController.text);
+                  String owner = _onwerController.text;
+                  String release = _releaseController.text;
 
                   if (args['isEditing']) {
-                    await RestaurantService.update(
+                    await SystemService.update(
                       item: {
                         'name': name,
                         'description': description,
-                        'address': address,
-                        'phone': phone,
-                        'type': type,
-                        'stars': stars.toInt()
+                        'version': version,
+                        'price': price,
+                        'owner': owner,
+                        'release': release,
                       },
                       id: args['id'],
                     );
                   } else {
-                    await RestaurantService.save(
+                    await SystemService.save(
                       name: name,
                       description: description,
-                      address: address,
-                      phone: phone,
-                      type: type,
-                      stars: stars.toInt(),
+                      version: version,
+                      price: price,
+                      owner: owner,
+                      release: release,
                     );
                   }
 
-                  Navigator.pushNamed(context, '/');
+                  Navigator.pushNamed(context, '/systems');
                   /*Navigator.push(
                     context,
                     MaterialPageRoute(

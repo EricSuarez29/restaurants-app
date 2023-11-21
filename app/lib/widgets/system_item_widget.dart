@@ -1,11 +1,11 @@
 import 'package:app/screens/restaurant_detail.dart';
 import 'package:app/services/restaurant_service.dart';
+import 'package:app/services/system_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
-class RestaurantItemWidget extends StatelessWidget {
-  RestaurantItemWidget(
-      {super.key, required this.item, required this.changeItems});
+class SystemItemWidget extends StatelessWidget {
+  SystemItemWidget({super.key, required this.item, required this.changeItems});
   dynamic item;
   Function changeItems;
 
@@ -34,16 +34,13 @@ class RestaurantItemWidget extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),
           subtitle: Text(
-            item['type'],
+            item['owner'],
             style: const TextStyle(color: Colors.black54),
           ),
-          trailing: Wrap(children: [
-            ...List.generate(item['stars'], (index) => const Icon(Icons.star))
-          ]),
           onTap: () {
             Navigator.pushNamed(
               context,
-              '/restaurants-detail',
+              '/system-detail',
               arguments: {
                 'isEditing': true,
                 ...item,
@@ -85,7 +82,7 @@ class RestaurantItemWidget extends StatelessWidget {
       child: const Text("Desactivar"),
       onPressed: () async {
         print("Eliminando..");
-        await RestaurantService.softDeleteById(item['id']);
+        await SystemService.softDeleteById(item['id']);
         changeItems();
         Navigator.of(context).pop();
         // Otras acciones de eliminar
@@ -93,8 +90,8 @@ class RestaurantItemWidget extends StatelessWidget {
     );
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: const Text("Desactivar Restaurante"),
-      content: const Text("¿Estás seguro de desactivar la Restaurante?"),
+      title: const Text("Desactivar Sistema Operativo"),
+      content: const Text("¿Estás seguro de desactivar la Sistema Operativo?"),
       actions: [
         cancelButton,
         continueButton,

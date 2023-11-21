@@ -20,7 +20,9 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            RestaurantSeeder::class
+            RestaurantSeeder::class,
+            SystemSeeder::class,
+            TraslatePhraseSeeder::class
         ]);
     }
 }

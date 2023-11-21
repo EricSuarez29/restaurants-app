@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\SystemController;
+use App\Http\Controllers\TraslatePhraseController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -27,4 +29,24 @@ Route::controller(RestaurantController::class)
         Route::get('/{restaurant}', 'show');
         Route::put('/{restaurant}', 'update');
         Route::delete('/{restaurant}', 'destroy');
+    });
+
+Route::controller(SystemController::class)
+    ->prefix('/systems')
+    ->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{system}', 'show');
+        Route::put('/{system}', 'update');
+        Route::delete('/{system}', 'destroy');
+    });
+
+Route::controller(TraslatePhraseController::class)
+    ->prefix('/phrases')
+    ->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{traslatePhrase}', 'show');
+        Route::put('/{traslatePhrase}', 'update');
+        Route::delete('/{traslatePhrase}', 'destroy');
     });

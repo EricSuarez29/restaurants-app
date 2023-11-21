@@ -1,17 +1,17 @@
-import 'package:app/screens/restaurant_detail.dart';
-import 'package:app/services/restaurant_service.dart';
+import 'package:app/services/system_service.dart';
+import 'package:app/widgets/dictionary_item_widget.dart';
 import 'package:app/widgets/drawer_widget.dart';
-import 'package:app/widgets/restaurant_item_widget.dart';
+import 'package:app/widgets/system_item_widget.dart';
 import 'package:flutter/material.dart';
 
-class RestaurantsScreen extends StatefulWidget {
-  const RestaurantsScreen({super.key});
+class SystemsScreen extends StatefulWidget {
+  const SystemsScreen({super.key});
 
   @override
-  State<RestaurantsScreen> createState() => _RestaurantsScreenState();
+  State<SystemsScreen> createState() => _SystemsScreenState();
 }
 
-class _RestaurantsScreenState extends State<RestaurantsScreen> {
+class _SystemsScreenState extends State<SystemsScreen> {
   void changeItems() {
     setState(() {});
   }
@@ -27,21 +27,25 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
         // Here we take the value from the MyHomePage object that was created by
         // the App.build method, and use it to set our appbar title.
         title: const Text(
-          "Restaurantes",
-          style:
-              const TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
+          "Sistemas Operativos",
+          style: TextStyle(
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
       ),
       drawer: const DrawerWidget(),
       body: FutureBuilder(
-        future: RestaurantService.fetchAll(),
+        future: SystemService.fetchAll(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             return ListView(
               children: [
                 ...snapshot.data!.map(
-                  (category) => RestaurantItemWidget(
-                      item: category, changeItems: changeItems),
+                  (item) => DictionaryItemWidget(
+                    item: item,
+                    changeItems: changeItems,
+                  ),
                 ),
               ],
             );
@@ -57,7 +61,7 @@ class _RestaurantsScreenState extends State<RestaurantsScreen> {
         onPressed: () {
           Navigator.pushNamed(
             context,
-            '/restaurants-detail',
+            '/system-detail',
             arguments: {
               //'isEditing': false,
             },

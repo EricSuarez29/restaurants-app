@@ -1,3 +1,4 @@
+import 'package:app/router/app_router.dart';
 import 'package:app/screens/restaurants_screen.dart';
 import 'package:flutter/material.dart';
 
@@ -33,7 +34,8 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: RestaurantsScreen(title: 'Restaurants App'),
+      routes: AppRouter.routes,
+      initialRoute: AppRouter.initialRoute,
     );
   }
 }
